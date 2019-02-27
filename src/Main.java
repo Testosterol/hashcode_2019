@@ -4,7 +4,7 @@ public class Main {
         System.out.println("Hello HashCode 2019!");
         System.out.println("Shahar is here!");
         System.out.println("Mirza is here");
-        //Iiiit's working - Peter
+        System.out.println("Peter is here");
+        System.out.println("Is Sebastian here as well?");
     }
-
 }

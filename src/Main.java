@@ -1,76 +1,83 @@
-import java.awt.*;
 import java.io.*;
-import java.security.KeyPair;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     static final String PATH_TO_DESKTOP = "a_example.txt";
 
     static HashMap<String,Integer> tags;
-    static ArrayList<Image> images;
+    static ArrayList<Image> horizontalImages;
     static ArrayList<Pair> pairs ;
     static SlideShow slideShow;
-
-
+    static ArrayList<Slide> slides;
+    static ArrayList<Image> vertivalImages;
 
     public static void main(String[] args) {
 
         tags = new HashMap<>();
-        images = new ArrayList<>();
+        horizontalImages = new ArrayList<>();
+        vertivalImages = new ArrayList<>();
         pairs = new ArrayList<>();
         slideShow = new SlideShow();
+        slides = new ArrayList<>();
         setArray();
 
         solve();
     }
 
+
     public static void solve(){
-        sortBestImages(images);
+
+        for(int i=0; i<vertivalImages.size();i+=2){
+            Slide slide = new Slide(vertivalImages.get(i));
+            slide.images.add(vertivalImages.get(i+1));
+            slide.mergeTag();
+        }
+
+        for(Image image : horizontalImages)
+            slides.add(new Slide(image));
+
+        sortBestImages(slides);
 
         while(pairs.size() > 0){
             Pair maxPair = pairs.get(pairs.size()-1);
-            slideShow.slides.add(new Slide(maxPair.left));
-            slideShow.slides.add(new Slide(maxPair.right));
+            slideShow.slides.add(slideShow.slides.size(),maxPair.left);
+            slideShow.slides.add(slideShow.slides.size(),maxPair.right);
             pairs.remove(maxPair.left);
             pairs.remove(maxPair.right);
             removeFromPairs(maxPair.left);
             removeFromPairs(maxPair.right);
         }
 
-//        for(Slide slide : slideShow.slides) {
-//            System.out.println(slide.images.get(0).getPhotoId()+" ");
-//        }
+        for(Slide slide : slideShow.slides) {
+            System.out.println(slide.images.get(0).getPhotoId()+" ");
+        }
         createOutputFile();
     }
 
-    public static void removeFromPairs(Image left){
+    public static void removeFromPairs(Slide slide){
         ArrayList<Pair> removeList = new ArrayList<>();
 
         for(Pair pair : pairs) {
-            if(pair.left.getPhotoId() == left.getPhotoId()
-                    || pair.right.getPhotoId() == left.getPhotoId()) {
+            if(pair.left.equals(slide)
+                    || pair.right.equals(slide)) {
                 removeList.add(pair);
             }
         }
-
         pairs.removeAll(removeList);
     }
 
-    public static void sortBestImages(ArrayList<Image> images) {
+    public static void sortBestImages(ArrayList<Slide> slides) {
 
-        for(int i=0;i<images.size();i++) {
-            for (int j = 0; j < images.size(); j++) {
+        for(int i=0;i<slides.size();i++) {
+            for (int j = 0; j < horizontalImages.size(); j++) {
                 if (i == j)
                     continue;
 
                 Pair pair = new Pair();
-                pair.left = images.get(i);
-                pair.right = images.get(j);
-                pair.score = getPointsFor2Images(pair.left,pair.right);
+                pair.left = slides.get(i);
+                pair.right = slides.get(j);
+                pair.score = getPointsFor2Slides(pair.left,pair.right);
                 pairs.add(pair);
             }
         }
@@ -86,17 +93,15 @@ public class Main {
                      return 1;
             }
         });
-
     }
 
-    public static int getPointsFor2Images(Image left,Image right ) {
 
-        return Math.min(Math.min(getCommonTags(left,right),getLeftUnique(left,right)),getLeftUnique(right,left));
+    public static int getPointsFor2Slides(Slide left,Slide right ) {
+        return Math.min(Math.min(getCommonTags(left.getTags(),right.getTags()),
+                getLeftUnique(left.getTags(),right.getTags())),getLeftUnique(right.getTags(),left.getTags()));
     }
 
-    public static int getCommonTags(Image left,Image right) {
-        TagList leftList = left.getTagList();
-        TagList rightList = right.getTagList();
+    public static int getCommonTags(TagList leftList,TagList rightList) {
         int equals = 0;
 
         for(int i=0;i<leftList.size();i++){
@@ -109,9 +114,7 @@ public class Main {
         return equals;
     }
 
-    public static int getLeftUnique(Image left,Image right) {
-        TagList leftList = left.getTagList();
-        TagList rightList = right.getTagList();
+    public static int getLeftUnique(TagList leftList,TagList rightList) {
         int unique = 0;
 
         for(int i=0;i<leftList.size();i++){
@@ -147,8 +150,8 @@ public class Main {
     }
 
     static class Pair{
-        Image left;
-        Image right;
+        Slide left;
+        Slide right;
         int score;
     }
 
@@ -158,8 +161,27 @@ public class Main {
 
     static class Slide {
         ArrayList<Image> images = new ArrayList<>();
+        TreeSet<Tag> mergedTags = new TreeSet<>();
+
         public Slide(Image image) {
             images.add(images.size(),image);
+        }
+
+        public TagList getTags(){
+            TagList list = new TagList();
+            for(Tag tag: mergedTags){
+                list.add(tag);
+            }
+            return list;
+        }
+
+        public void mergeTag(){
+            for(Image image : images) {
+                for(Tag tag : image.getTagList()) {
+                    mergedTags.add(tag);
+                }
+            }
+
         }
     }
 
@@ -189,10 +211,15 @@ public class Main {
             }
             if(values[0].equals("H"))
                 image = new Image(Image.ORIENTATION.HORIZONTAL,list,Integer.parseInt(values[1]),i);
-            else
-                image = new Image(Image.ORIENTATION.VERTICAL,list,Integer.parseInt(values[1]),i);
+            else {
+                image = new Image(Image.ORIENTATION.VERTICAL, list, Integer.parseInt(values[1]), i);
+            }
 
-            images.add(image);
+            if(values[0].equals("V")){
+                vertivalImages.add(image);
+            } else {
+                horizontalImages.add(image);
+            }
         }
 
 

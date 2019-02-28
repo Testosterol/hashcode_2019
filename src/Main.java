@@ -51,7 +51,15 @@ public class Main {
             //array[i] = scan.nextLine().split("");
             String[] values = scan.nextLine().split(" ");
             Image image = new Imgae();
-
+            image.setOrientation(values[0]);
+            TagList list = new TagList();
+            for (int j=2;j<Integer.parseInt(values[1]);j++){
+                if(tags.containsKey(values[j])) {
+                    tags.put(values[j],tags.get(values[j]+1));
+                } else {
+                    tags.put(values[j],1);
+                }
+            }
         }
 
 

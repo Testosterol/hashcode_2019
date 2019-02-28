@@ -1,19 +1,22 @@
 import java.awt.*;
 import java.io.*;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
 
-    //static final String PATH_TO_DESKTOP = System.getProperty("user.home") + "/Desktop/"+FILE_NAME;
     static final String PATH_TO_DESKTOP = "a_example.in";
 
-    static String[][] array;
-    static int rows;
-    static int cols;
-    static int var1;
-    static int var2;
+    static int images;
+    static HashMap<String,Integer> tags;
+    //static SlideShow slideShow;
+
 
     public static void main(String[] args) {
+
+       tags = new HashMap<>();
+       //slideShow = new SlideShow();
+
         setArray();
     }
 
@@ -42,31 +45,17 @@ public class Main {
         catch (FileNotFoundException e) {}
 
         String s = scan.nextLine();
-        String[] values = s.split(" ");
+        images = Integer.parseInt(s);
 
-        rows = Integer.parseInt(values[0]);
-        cols = Integer.parseInt(values[1]);
-        var1 = Integer.parseInt(values[2]);
-        var2 = Integer.parseInt(values[3]);
+        for(int i=0;i<images;i++) {
+            //array[i] = scan.nextLine().split("");
+            String[] values = scan.nextLine().split(" ");
+            Image image = new Imgae();
 
-        array = new String[rows][cols];
-        for(int i=0;i<array.length;i++)
-            array[i] = scan.nextLine().split("");
+        }
 
-        System.out.println(var1);
+
+
     }
 
-    //Convert one dimensional point to 2 dimensional point
-    static Point oneToTwo(int index) {
-        Point point = new Point();
-        point.x = index/(array.length);
-        point.y = index%(array.length);
-
-        return point;
-    }
-
-    //Convert two dimensional point to 1 dimensional point
-    static int twoToOne(Point point) {
-        return point.x*(array.length) + point.y;
-    }
 }

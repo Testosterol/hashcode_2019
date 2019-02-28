@@ -4,16 +4,17 @@ import java.util.Scanner;
 
 public class Main {
 
-    static final String FILE_NAME = "";
-    static final String PATH_TO_DESKTOP = System.getProperty("user.home") + "/Desktop/hashcode/"+FILE_NAME;
+    //static final String PATH_TO_DESKTOP = System.getProperty("user.home") + "/Desktop/"+FILE_NAME;
+    static final String PATH_TO_DESKTOP = "a_example.in";
 
     static String[][] array;
-    static int arrayRows;
-    static int arrayCols;
+    static int rows;
+    static int cols;
     static int var1;
     static int var2;
 
     public static void main(String[] args) {
+        setArray();
     }
 
     public static void createOutputFile(String path){
@@ -43,14 +44,16 @@ public class Main {
         String s = scan.nextLine();
         String[] values = s.split(" ");
 
-        arrayRows = Integer.parseInt(values[0]);
-        arrayCols = Integer.parseInt(values[1]);
+        rows = Integer.parseInt(values[0]);
+        cols = Integer.parseInt(values[1]);
         var1 = Integer.parseInt(values[2]);
         var2 = Integer.parseInt(values[3]);
 
-        array = new String[arrayRows][arrayCols];
+        array = new String[rows][cols];
         for(int i=0;i<array.length;i++)
             array[i] = scan.nextLine().split("");
+
+        System.out.println(var1);
     }
 
     //Convert one dimensional point to 2 dimensional point

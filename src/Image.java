@@ -21,4 +21,36 @@ public class Image {
         this.photoId = photoId;
     }
 
+
+    public ORIENTATION getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(ORIENTATION orientation) {
+        this.orientation = orientation;
+    }
+
+    public TagList getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(TagList tagList) {
+        this.tagList = tagList;
+    }
+
+    public int getNumberOfTags() {
+        return numberOfTags;
+    }
+
+    public void setNumberOfTags(int numberOfTags) {
+        this.numberOfTags = numberOfTags;
+    }
+
+    public int getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(int photoId) {
+        this.photoId = photoId;
+    }
 }

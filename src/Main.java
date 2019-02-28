@@ -1,24 +1,73 @@
 import java.awt.*;
 import java.io.*;
+import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
 
-    static final String PATH_TO_DESKTOP = "a_example.in";
+    static final String PATH_TO_DESKTOP = "a_example.txt";
 
-    static int images;
     static HashMap<String,Integer> tags;
-    //static SlideShow slideShow;
+    static ArrayList<Image> images;
 
 
     public static void main(String[] args) {
 
-       tags = new HashMap<>();
-       //slideShow = new SlideShow();
-
+        tags = new HashMap<>();
+        images = new ArrayList<>();
         setArray();
+
+        for(String pair: tags.keySet()){
+            System.out.println(pair +": "+ tags.get(pair));
+        }
     }
+
+    public static int getPointsFor2Images(Image left,Image right ) {
+
+        return Math.min(Math.min(getCommonTags(left,right),getLeftUnique(left,right)),getLeftUnique(right,left));
+    }
+
+    public static int getCommonTags(Image left,Image right) {
+        TagList leftList = left.getTags();
+        TagList rightList = right.getTags();
+        int equals = 0;
+
+        for(int i=0;i<leftList.size();i++){
+            for(int j=0;j<rightList.size();j++){
+                if(leftList.get(i).equals(rightList.get(j)))
+                    equals++;
+            }
+        }
+
+        return equals;
+    }
+
+    public static int getLeftUnique(Image left,Image right) {
+        TagList leftList = left.getTags();
+        TagList rightList = right.getTags();
+        int unique = 0;
+
+        for(int i=0;i<leftList.size();i++){
+            for(int j=0;j<rightList.size();j++){
+                if(leftList.get(i).equals(rightList.get(j)))
+                    break;
+                unique++;
+            }
+        }
+
+        return unique;
+    }
+
+
+
+//    public static Tag getBiggestTag(){
+//
+//        for(String pair: tags.keySet()){
+//            System.out.println(pair +": "+ tags.get(pair));
+//        }
+//    }
 
     public static void createOutputFile(String path){
         Writer writer = null;
@@ -45,21 +94,27 @@ public class Main {
         catch (FileNotFoundException e) {}
 
         String s = scan.nextLine();
-        images = Integer.parseInt(s);
+        int numOfimages = Integer.parseInt(s);
 
-        for(int i=0;i<images;i++) {
+        for(int i=0;i<numOfimages;i++) {
             //array[i] = scan.nextLine().split("");
             String[] values = scan.nextLine().split(" ");
-            Image image = new Imgae();
-            image.setOrientation(values[0]);
+            Image image;
             TagList list = new TagList();
-            for (int j=2;j<Integer.parseInt(values[1]);j++){
+            for (int j=2;j<values.length;j++){
+                list.add(new Tag(values[j]));
                 if(tags.containsKey(values[j])) {
-                    tags.put(values[j],tags.get(values[j]+1));
+                    tags.put(values[j],tags.get(values[j])+1);
                 } else {
                     tags.put(values[j],1);
                 }
             }
+            if(values[0].equals("H"))
+                image = new Image(Image.ORIENTATION.HORIZONTAL,list,Integer.parseInt(values[1]),i);
+            else
+                image = new Image(Image.ORIENTATION.VERTICAL,list,Integer.parseInt(values[1]),i);
+
+            images.add(image);
         }
 
 

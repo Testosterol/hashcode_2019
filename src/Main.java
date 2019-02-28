@@ -24,14 +24,32 @@ public class Main {
         }
     }
 
+    public static void sortBestImages(ArrayList<Image> images) {
+        ArrayList<Pair> pairs = new ArrayList<Pair>();
+
+        for(int i=0;i<images.size();i++) {
+            for (int j = 0; j < images.size(); j++) {
+                if (i == j)
+                    continue;
+
+                Pair pair = new Pair();
+                pair.left = images.get(i);
+                pair.right = images.get(j);
+                pair.score = getPointsFor2Images(pair.left,pair.right);
+                pairs.add(pair);
+            }
+        }
+
+    }
+
     public static int getPointsFor2Images(Image left,Image right ) {
 
         return Math.min(Math.min(getCommonTags(left,right),getLeftUnique(left,right)),getLeftUnique(right,left));
     }
 
     public static int getCommonTags(Image left,Image right) {
-        TagList leftList = left.getTags();
-        TagList rightList = right.getTags();
+        TagList leftList = left.getTagList();
+        TagList rightList = right.getTagList();
         int equals = 0;
 
         for(int i=0;i<leftList.size();i++){
@@ -45,8 +63,8 @@ public class Main {
     }
 
     public static int getLeftUnique(Image left,Image right) {
-        TagList leftList = left.getTags();
-        TagList rightList = right.getTags();
+        TagList leftList = left.getTagList();
+        TagList rightList = right.getTagList();
         int unique = 0;
 
         for(int i=0;i<leftList.size();i++){
@@ -83,6 +101,12 @@ public class Main {
         } catch (IOException e) {
             System.err.println("Problem writing to the file statsTest.txt");
         }
+    }
+
+    static class Pair{
+        Image left;
+        Image right;
+        int score;
     }
 
     //set up the class array from the file given in the file name constant.

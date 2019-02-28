@@ -2,6 +2,7 @@ import java.awt.*;
 import java.io.*;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -11,21 +12,55 @@ public class Main {
 
     static HashMap<String,Integer> tags;
     static ArrayList<Image> images;
+    static ArrayList<Pair> pairs ;
+    static SlideShow slideShow;
+
 
 
     public static void main(String[] args) {
 
         tags = new HashMap<>();
         images = new ArrayList<>();
+        pairs = new ArrayList<>();
+        slideShow = new SlideShow();
         setArray();
 
-        for(String pair: tags.keySet()){
-            System.out.println(pair +": "+ tags.get(pair));
+        solve();
+    }
+
+    public static void solve(){
+        sortBestImages(images);
+
+        while(pairs.size() > 0){
+            Pair maxPair = pairs.get(pairs.size()-1);
+            slideShow.slides.add(new Slide(maxPair.left));
+            slideShow.slides.add(new Slide(maxPair.right));
+            pairs.remove(maxPair.left);
+            pairs.remove(maxPair.right);
+            removeFromPairs(maxPair.left);
+            removeFromPairs(maxPair.right);
         }
+
+//        for(Slide slide : slideShow.slides) {
+//            System.out.println(slide.images.get(0).getPhotoId()+" ");
+//        }
+        createOutputFile();
+    }
+
+    public static void removeFromPairs(Image left){
+        ArrayList<Pair> removeList = new ArrayList<>();
+
+        for(Pair pair : pairs) {
+            if(pair.left.getPhotoId() == left.getPhotoId()
+                    || pair.right.getPhotoId() == left.getPhotoId()) {
+                removeList.add(pair);
+            }
+        }
+
+        pairs.removeAll(removeList);
     }
 
     public static void sortBestImages(ArrayList<Image> images) {
-        ArrayList<Pair> pairs = new ArrayList<Pair>();
 
         for(int i=0;i<images.size();i++) {
             for (int j = 0; j < images.size(); j++) {
@@ -39,6 +74,18 @@ public class Main {
                 pairs.add(pair);
             }
         }
+
+        pairs.sort(new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                 if(o1.score < o2.score)
+                     return -1;
+                 else if(o1.score == o2.score)
+                     return 0;
+                 else
+                     return 1;
+            }
+        });
 
     }
 
@@ -54,7 +101,7 @@ public class Main {
 
         for(int i=0;i<leftList.size();i++){
             for(int j=0;j<rightList.size();j++){
-                if(leftList.get(i).equals(rightList.get(j)))
+                if(leftList.get(i).getTag().equals(rightList.get(j).getTag()))
                     equals++;
             }
         }
@@ -69,7 +116,7 @@ public class Main {
 
         for(int i=0;i<leftList.size();i++){
             for(int j=0;j<rightList.size();j++){
-                if(leftList.get(i).equals(rightList.get(j)))
+                if(leftList.get(i).getTag().equals(rightList.get(j).getTag()))
                     break;
                 unique++;
             }
@@ -80,21 +127,17 @@ public class Main {
 
 
 
-//    public static Tag getBiggestTag(){
-//
-//        for(String pair: tags.keySet()){
-//            System.out.println(pair +": "+ tags.get(pair));
-//        }
-//    }
-
-    public static void createOutputFile(String path){
+    public static void createOutputFile(){
         Writer writer = null;
-        File file = new File(path);
+        File file = new File(System.getProperty("user.home") + "/Desktop/hashcode/a.txt");
         try {
             FileOutputStream is = new FileOutputStream(file);
             OutputStreamWriter osw = new OutputStreamWriter(is);
             Writer w = new BufferedWriter(osw);
-            //w.write(("\n"));
+            w.write(slideShow.slides.size()+"\n");
+            for(int i=0; i<slideShow.slides.size();i++){
+                w.write(slideShow.slides.get(i).images.get(0).getPhotoId()+"\n");
+            }
             w.close();
             osw.close();
             is.close();
@@ -107,6 +150,17 @@ public class Main {
         Image left;
         Image right;
         int score;
+    }
+
+    static class SlideShow {
+        ArrayList<Slide> slides = new ArrayList<>();
+    }
+
+    static class Slide {
+        ArrayList<Image> images = new ArrayList<>();
+        public Slide(Image image) {
+            images.add(images.size(),image);
+        }
     }
 
     //set up the class array from the file given in the file name constant.

@@ -32,6 +32,7 @@ public class Main {
             Slide slide = new Slide(vertivalImages.get(i));
             slide.images.add(vertivalImages.get(i+1));
             slide.mergeTag();
+            slides.add(slide);
         }
 
         for(Image image : horizontalImages)
@@ -52,6 +53,7 @@ public class Main {
         for(Slide slide : slideShow.slides) {
             System.out.println(slide.images.get(0).getPhotoId()+" ");
         }
+
         createOutputFile();
     }
 

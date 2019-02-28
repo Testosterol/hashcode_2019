@@ -46,13 +46,18 @@ public class Main {
             slideShow.slides.add(slideShow.slides.size(),maxPair.right);
             pairs.remove(maxPair.left);
             pairs.remove(maxPair.right);
+            slides.remove(maxPair.left);
+            slides.remove(maxPair.right);
             removeFromPairs(maxPair.left);
             removeFromPairs(maxPair.right);
         }
-
-        for(Slide slide : slideShow.slides) {
-            System.out.println(slide.images.get(0).getPhotoId()+" ");
+        if(slides.size() > 0) {
+            slideShow.slides.add(slideShow.slides.size(),slides.get(0));
         }
+
+//        for(Slide slide : slideShow.slides) {
+//            System.out.println(slide.images.get(0).getPhotoId()+" ");
+//        }
 
         createOutputFile();
     }
@@ -141,7 +146,11 @@ public class Main {
             Writer w = new BufferedWriter(osw);
             w.write(slideShow.slides.size()+"\n");
             for(int i=0; i<slideShow.slides.size();i++){
-                w.write(slideShow.slides.get(i).images.get(0).getPhotoId()+"\n");
+                if(slideShow.slides.get(i).images.size() > 1) {
+                    w.write(slideShow.slides.get(i).images.get(0).getPhotoId()+" " + slideShow.slides.get(i).images.get(1).getPhotoId()+"\n");
+                } else {
+                    w.write(slideShow.slides.get(i).images.get(0).getPhotoId()+"\n");
+                }
             }
             w.close();
             osw.close();

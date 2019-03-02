@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Image {
     public enum ORIENTATION {
         HORIZONTAL,
@@ -5,14 +8,14 @@ public class Image {
     }
 
     private ORIENTATION orientation;
-    private TagList tagList;
+    private ArrayList<String> tagList;
     private int numberOfTags;
     private int photoId;
 
-    public Image(ORIENTATION orientation, TagList tagList, int numberOfTags, int photoId) {
-        TagList tagsToLower = new TagList();
-        for (Tag tag : tagList) {
-            tagsToLower.add(new Tag(tag.getTag().toLowerCase()));
+    public Image(ORIENTATION orientation, ArrayList<String> tagList, int numberOfTags, int photoId) {
+        ArrayList<String> tagsToLower = new ArrayList<>();
+        for (String tag : tagList) {
+            tagsToLower.add(tag);
         }
 
         this.orientation = orientation;
@@ -20,7 +23,6 @@ public class Image {
         this.numberOfTags = numberOfTags;
         this.photoId = photoId;
     }
-
 
     public ORIENTATION getOrientation() {
         return orientation;
@@ -30,11 +32,11 @@ public class Image {
         this.orientation = orientation;
     }
 
-    public TagList getTagList() {
+    public ArrayList<String> getTagList() {
         return tagList;
     }
 
-    public void setTagList(TagList tagList) {
+    public void setTagList(ArrayList<String> tagList) {
         this.tagList = tagList;
     }
 
